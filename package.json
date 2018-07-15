@@ -1,0 +1,45 @@
+{
+  "name": "basic-scaffolding",
+  "version": "0.0.1",
+  "description": "basic scaffolding for Node.js Server-side using typescript",
+  "main": " ",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "test"
+  },
+  "author": "cuponthetop",
+  "license": "MIT",
+  "dependencies": {
+    "@types/argparse": "^1.0.33",
+    "@types/body-parser": "^1.17.0",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/cors": "^2.8.4",
+    "@types/express": "^4.11.1",
+    "@types/express-winston": "^2.4.3",
+    "@types/knex": "^0.14.14",
+    "@types/lodash": "^4.14.108",
+    "@types/logform": "^1.2.0",
+    "@types/method-override": "0.0.31",
+    "@types/node": "^8.10.11",
+    "@types/winston": "^2.3.9",
+    "@types/ws": "^5.1.0",
+    "argparse": "^1.0.10",
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "express-winston": "^2.5.1",
+    "knex": "^0.14.6",
+    "lodash": "^4.17.10",
+    "logform": "^1.6.0",
+    "method-override": "^2.3.10",
+    "ts-node": "^6.0.1",
+    "typescript": "^2.8.3",
+    "winston": "^2.4.2",
+    "ws": "^5.1.1"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "mocha": "^5.1.1"
+  }
+}
