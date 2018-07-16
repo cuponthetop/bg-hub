@@ -2,13 +2,34 @@
 # Default server configuration
 #
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+ #   listen 80 default_server;
+ #   listen [::]:80 default_server;
 
     # SSL configuration
     #
-    # listen 443 ssl default_server;
-    # listen [::]:443 ssl default_server;
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    ssl_certificate     /etc/letsencrypt/live/cuponthetop.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cuponthetop.com/privkey.pem;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 5m;
+    
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+    
+    # Enable HSTS (https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security)
+    add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";  
+
+    # Enable OCSP stapling (http://blog.mozilla.org/security/2013/07/29/ocsp-stapling-in-firefox)
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/letsencrypt/live/cuponthetop.com/fullchain.pem;
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;	
+    
     #
     # Note: You should disable gzip for SSL traffic.
     # See: https://bugs.debian.org/773332
@@ -28,5 +49,9 @@ server {
 
     location /bus.html {
         root /home/ubuntu/static/;
+    }
+
+    location /.well-known/acme-challenge {
+        root /var/www/html/;
     }
 }
