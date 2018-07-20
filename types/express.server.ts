@@ -1,7 +1,6 @@
 import { Express, Router } from 'express';
 import * as express from 'express';
-import { PortHoldingServer, PrepareOpts, ListenOpts } from './server';
-import { Service } from './service';
+import { PortHoldingServer, } from './server';
 import { LoggerInstance, TransportInstance } from 'winston';
 import * as _ from 'lodash';
 import { Server, IncomingMessage, ServerResponse } from 'http';
@@ -12,22 +11,17 @@ import * as methodoverride from 'method-override';
 import * as cors from 'cors';
 import { logger, errorLogger } from 'express-winston';
 import { Socket } from 'net';
-
-export interface ExpressListenOpts extends ListenOpts {
-  logRequest?: boolean,
-  logClientError?: boolean,
-  logConnect?: boolean,
-};
+import { ServiceList } from './service-list';
+import { HTTPConfig } from './config';
 
 export abstract class ExpressServer extends PortHoldingServer {
   protected app: Express = null;
 
-  constructor(logger: LoggerInstance, port: number, services: Service[]) {
-    super(logger, port, services);
+  constructor(logger: LoggerInstance, services: ServiceList, config: HTTPConfig) {
+    super(logger, services, config);
   };
 
-  async prepare(opts: PrepareOpts): Promise<boolean> {
-    opts;
+  async prepare(): Promise<boolean> {
     this.app = express();
 
     this.injectMiddleware();
@@ -42,9 +36,7 @@ export abstract class ExpressServer extends PortHoldingServer {
     return true;
   };
 
-  async listen(opts: ExpressListenOpts): Promise<Server> {
-    opts;
-
+  async listen(): Promise<Server> {
     if (_.isNull(this.app)) {
       return null;
     }
@@ -53,21 +45,21 @@ export abstract class ExpressServer extends PortHoldingServer {
       this.logger.info(`Express Server listening on port: ${this.port}`);
     });
 
-    if (true === _.get(opts, 'logClientError', false)) {
+    if (true === (<HTTPConfig>this.config).clientErrorLog) {
       ret.on("clientError", (err: Error, socket: Socket) => {
         this.logger.warn(`Client-side error ${err.name} has occurred from ${socket.remoteAddress} - ${err.message}: ${err.stack}`);
       });
     }
 
 
-    if (true === _.get(opts, 'logConnect', false)) {
+    if (true === this.config.connectLog) {
       ret.on("connect", (req: IncomingMessage, socket: Socket, head: Buffer) => {
         req;
         this.logger.info(`Connection from ${socket.remoteAddress}, head: ${head.toString('utf-8')}`);
       });
     }
 
-    if (true === _.get(opts, 'logRequest', false)) {
+    if (true === (<HTTPConfig>this.config).requestLog) {
       ret.on("request", (req: IncomingMessage, res: ServerResponse) => {
         this.logger.info(`Request ${req.method} ${JSON.stringify(req.headers)}, res: ${res.statusCode} - ${res.statusMessage}`);
       });

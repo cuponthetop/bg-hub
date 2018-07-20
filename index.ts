@@ -2,12 +2,20 @@ import { LoggerInstance } from "winston";
 import { createLoggerInstance } from './util/logger';
 import { readConfig } from './util/config-reader';
 import { RunConfig } from './types/config';
+import { createServices } from "./util/create-service";
+import { ServiceList, ServerList } from "./types/service-list";
+import { createServers } from "./util/create-server";
 
 export async function main(args: RunConfig): Promise<void> {
 
   const logger: LoggerInstance = createLoggerInstance(args.log);
 
   handleGlobalProcessEvents(logger);
+
+  let services: ServiceList = await createServices(args, logger);
+  let servers: ServerList = await createServers(args, logger, services);
+
+  servers;
 }
 
 let once: boolean = true;

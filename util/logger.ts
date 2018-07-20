@@ -1,12 +1,12 @@
 import { has, get, isNull } from 'lodash';
 import * as winston from 'winston';
 import { format, Format } from 'logform';
-import { LogOption } from '../types/type';
+import { LogConfig } from '../types/config';
 
 
 export let logger: winston.LoggerInstance = null;
 
-export function createLoggerInstance(logOpts: LogOption): winston.LoggerInstance {
+export function createLoggerInstance(logOpts: LogConfig): winston.LoggerInstance {
   if (false === isNull(logger)) {
     process.emitWarning("createLoggerInstance was called more than twice!");
     return logger;

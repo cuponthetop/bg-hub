@@ -7,12 +7,19 @@ export interface RunConfig {
   log: LogConfig;
 };
 
-export interface HTTPConfig {
+export interface ServerConfig {
   port: number;
+  registerEventHandlers: boolean;
+  connectLog: boolean;
+  errorLog: boolean;
+}
+
+export interface HTTPConfig extends ServerConfig {
+  requestLog: boolean;
+  clientErrorLog: boolean;
 };
 
-export interface WSConfig {
-  port: number;
+export interface WSConfig extends ServerConfig {
 };
 
 export interface DBConfig {

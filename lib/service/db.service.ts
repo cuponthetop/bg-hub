@@ -8,7 +8,7 @@ export class DBService implements SharableService {
 
   constructor(
     // private logger: LoggerInstance,
-    private user: string,
+    private username: string,
     private password: string,
     private database: string,
     private host: string = '127.0.0.1',
@@ -19,7 +19,7 @@ export class DBService implements SharableService {
       client: 'pg',
       connection: {
         host: this.host,
-        user: this.user,
+        user: this.username,
         password: this.password,
         database: this.database
       }

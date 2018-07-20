@@ -1,18 +1,11 @@
 import * as ws from 'ws';
-import { PortHoldingServer, PrepareOpts, ListenOpts } from './server';
-import { Service } from './service';
+import { PortHoldingServer } from './server';
+import { ServiceList } from '../types/service-list';
 import { LoggerInstance } from 'winston';
 import * as _ from 'lodash';
 import { Server as BaseServer } from 'net';
-import { Server as HTTPServer, IncomingMessage } from 'http';
-import { Server as HTTPSServer } from 'https';
-
-export interface WSListenOpts extends ListenOpts {
-  server?: HTTPServer | HTTPSServer,
-  protocol: WSProtocol[],
-  hello: ConnFunc,
-  error: ConnFunc
-};
+import { IncomingMessage } from 'http';
+import { WSConfig } from './config';
 
 export interface WSData {
   type: string
@@ -29,28 +22,27 @@ export type WSProtocol = {
 export abstract class WSServer extends PortHoldingServer {
   protected wss: ws.Server = null;
 
-  constructor(logger: LoggerInstance, port: number, services: Service[]) {
-    super(logger, port, services);
+  constructor(
+    logger: LoggerInstance,
+    services: ServiceList,
+    config: WSConfig,
+    private hello: ConnFunc,
+    private error: ConnFunc
+  ) {
+    super(logger, services, config);
   };
 
-  async prepare(opts: PrepareOpts): Promise<boolean> {
-    opts;
-
+  async prepare(): Promise<boolean> {
     return true;
   };
 
-  async listen(opts: WSListenOpts): Promise<BaseServer> {
-    if (_.isUndefined(opts.server)) {
-      this.wss = new ws.Server({ port: this.port });
-      this.server = _.get(this.wss, '_server', null);
-    } else {
-      this.wss = new ws.Server({ server: <HTTPServer | HTTPSServer>opts.server });
-      this.server = opts.server;
-    }
+  async listen(): Promise<BaseServer> {
+    this.wss = new ws.Server({ port: this.port });
+    this.server = _.get(this.wss, '_server', null);
 
     if (false === _.isNull(this.wss)) {
       try {
-        this.registerOnConnectionHandler(opts.protocol, opts.hello, opts.error);
+        this.registerOnConnectionHandler(this.generateProtocol(), this.hello, this.error);
       } catch (e) {
         this.logger.error(`registering onConnection handler failed: ${e.message}`);
       }
@@ -105,4 +97,6 @@ export abstract class WSServer extends PortHoldingServer {
     }
     return true;
   };
+
+  protected abstract generateProtocol(): WSProtocol[];
 };
