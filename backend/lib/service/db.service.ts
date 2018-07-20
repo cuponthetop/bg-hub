@@ -52,4 +52,12 @@ export class DBService implements SharableService {
   schemaBuilder(): knex.SchemaBuilder {
     return this.client.schema;
   };
+
+  async createTable(tableName: string, callback: (tableBuilder: knex.CreateTableBuilder) => any, force: boolean): Promise<void> {
+    if (true === force) {
+      await this.client.schema.dropTableIfExists(tableName).createTable(tableName, callback);
+    } else {
+      await this.client.schema.createTableIfNotExists(tableName, callback);
+    }
+  };
 };
