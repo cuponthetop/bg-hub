@@ -10,7 +10,6 @@
   "author": "cuponthetop",
   "license": "MIT",
   "dependencies": {
-    "@types/argparse": "^1.0.33",
     "@types/body-parser": "^1.17.0",
     "@types/config": "0.0.34",
     "@types/cookie-parser": "^1.4.1",
@@ -24,7 +23,6 @@
     "@types/node": "^8.10.11",
     "@types/winston": "^2.3.9",
     "@types/ws": "^5.1.0",
-    "argparse": "^1.0.10",
     "body-parser": "^1.18.2",
     "config": "^1.30.0",
     "cookie-parser": "^1.4.3",
