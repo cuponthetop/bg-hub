@@ -1,0 +1,34 @@
+name: bg-hub
+
+db:
+  host: mongo
+  port: 27017
+  username:
+  password:
+  authDB: admin
+  db: bg
+
+http:
+  port: 3000
+
+ws:
+  port: 3001
+
+log:
+  http:
+    ssl: true
+    method: POST
+    host: sample.http.log.storage
+    port: 443
+    path: log
+    level: info
+
+  file:
+    dir: log
+    filename: sample_logfile
+    maxSizeInKB: 4096
+    level: debug
+
+  console:
+    logConsole: true
+    level: warn

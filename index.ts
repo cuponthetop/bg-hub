@@ -1,9 +1,9 @@
 import { LoggerInstance } from "winston";
 import { createLoggerInstance } from './util/logger';
-import { parse } from './util/parser';
-import { RunArgument } from './types/type';
+import { readConfig } from './util/config-reader';
+import { RunConfig } from './types/config';
 
-export async function main(args: RunArgument): Promise<void> {
+export async function main(args: RunConfig): Promise<void> {
 
   const logger: LoggerInstance = createLoggerInstance(args.log);
 
@@ -37,6 +37,6 @@ function handleGlobalProcessEvents(logger: LoggerInstance): void {
 }
 
 if (require.main === module) {
-  let args: RunArgument = parse();
+  let args: RunConfig = readConfig();
   main(args);
 }
