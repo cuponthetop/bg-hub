@@ -5,9 +5,9 @@ WORKDIR ~
 COPY backend backend
 COPY web web
 
-RUN pushd web \
+RUN cd web \
  && npm install \
  && npm run build \
- && popd && pushd backend \
+ && cd ../backend \
  && npm install \
  && npm start
