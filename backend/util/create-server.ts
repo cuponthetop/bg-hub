@@ -1,8 +1,8 @@
 import { RunConfig } from '../types/config';
+import { ServerList, ServiceList } from '../types/service-list';
 import { BGHubExpress } from '../lib/server/bg-hub.express';
 import { BGHubWS } from '../lib/server/bg-hub.ws';
 import { LoggerInstance } from 'winston';
-import { ServerList, ServiceList } from '../types/service-list';
 
 export async function createServers(config: RunConfig, logger: LoggerInstance, services: ServiceList): Promise<ServerList> {
   let express: BGHubExpress = new BGHubExpress(logger, services, config.http);

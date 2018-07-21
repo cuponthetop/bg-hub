@@ -1,15 +1,14 @@
-import { DBService } from '../lib/service/db.service';
-import { GameService } from '../lib/service/game.service';
+import { Service } from './service';
+import { PortHoldingServer } from './server';
 
-import { BGHubExpress } from '../lib/server/bg-hub.express';
-import { BGHubWS } from '../lib/server/bg-hub.ws';
+type ServiceNames = "db" | "game" | "locale" | "user";
 
 export type ServiceList = {
-  db: DBService,
-  game: GameService
+  [key in ServiceNames]: Service
 };
 
+type ServerNames = "express" | "ws";
+
 export type ServerList = {
-  express: BGHubExpress,
-  ws: BGHubWS
+  [key in ServerNames]: PortHoldingServer
 };
