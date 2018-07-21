@@ -1,6 +1,6 @@
 import { has, get } from 'config';
 import { RunConfig, LogConfig, DBConfig, HTTPConfig, WSConfig } from '../types/config';
-import { packageJSON } from 'load-package-json';
+import { packageJSON } from './load-package-json';
 import * as _ from 'lodash';
 
 export function readConfig(): RunConfig {

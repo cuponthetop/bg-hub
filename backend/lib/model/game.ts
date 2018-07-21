@@ -1,5 +1,4 @@
-import { LocaleID, COMMON_TABLES } from './common';
-import * as knex from 'knex';
+import { LocaleID, } from './common';
 
 export type Position = "game designer" | "graphic designer";
 export type GameID = number;
@@ -22,6 +21,7 @@ export class Game extends SimpleGame {
     public relation: GameRelation[],
     playerRange: number[],
     title: LocaleID,
+    public titleMsg: string,
     created_at: Date,
     updated_at: Date,
   ) {
@@ -29,32 +29,9 @@ export class Game extends SimpleGame {
   };
 };
 
-export interface GameRelation {
+interface GameRelation {
+  grid: number,
   type: "expansion" | "accessary" | "";
   targetID: GameID,
   sourceID: GameID
-};
-
-
-export enum GAME_TABLES {
-  GAME = "GAME",
-  RELATION = "RELATION",
-};
-
-export function GameSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer('id').notNullable().primary();
-  table.increments('id');
-
-  table.foreign('title').references('localeID').inTable(COMMON_TABLES.LOCALE);
-  table.timestamp('created_at');
-  table.timestamp('updated_at');
-  table.specificType('playerRange', 'array');
-};
-
-export function GameRelationSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer('grid').notNullable().primary();
-  table.increments('grid');
-
-  table.foreign('targetID').references(GAME_TABLES.GAME).inTable('id');
-  table.foreign('sourceID').references(GAME_TABLES.GAME).inTable('id');
 };

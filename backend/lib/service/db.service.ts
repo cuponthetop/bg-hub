@@ -2,6 +2,7 @@ import { SharableService, Controllable } from '../../types/service';
 // import { LoggerInstance } from 'winston';
 import * as _ from 'lodash';
 import * as knex from 'knex';
+import { TableDefinition } from '../../types/schema';
 
 export class DBService implements SharableService {
   private client: knex = null;
@@ -53,11 +54,11 @@ export class DBService implements SharableService {
     return this.client.schema;
   };
 
-  async createTable(tableName: string, callback: (tableBuilder: knex.CreateTableBuilder) => any, force: boolean): Promise<void> {
+  async createTable<T>(tableDefinition: TableDefinition<T>, force: boolean): Promise<void> {
     if (true === force) {
-      await this.client.schema.dropTableIfExists(tableName).createTable(tableName, callback);
+      await this.client.schema.dropTableIfExists(tableDefinition.name).createTable(tableDefinition.name, tableDefinition.builder);
     } else {
-      await this.client.schema.createTableIfNotExists(tableName, callback);
+      await this.client.schema.createTableIfNotExists(tableDefinition.name, tableDefinition.builder);
     }
   };
 };

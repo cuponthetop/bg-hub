@@ -31,27 +31,30 @@ export class User extends SimpleUser {
 
 export interface GameListItem {
   game: Game,
+  user: number
   type: "own"
 };
 
 export interface History {
+  id: number,
   game: Game,
-  result: { value: number, who: User }[],
-  duration: {
-    from: Date, to: Date
-  },
+  user: number,
+  result: number[],
+  from: Date, to: Date
   location: Location,
 };
 
 export interface Result {
-  player: User,
+  id: number,
+  history: number,
+  player: number,
   score: number,
 };
 
 export interface Group {
   id: number
   name: string,
-  member: User[]
+  member: number[]
 };
 
 export interface Location {

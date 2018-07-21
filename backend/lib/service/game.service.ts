@@ -2,7 +2,8 @@ import { SharableService, Controllable } from '../../types/service';
 import { LoggerInstance } from 'winston';
 // import * as _ from 'lodash';
 // import { LRUCache } from '../../util/lru';
-import { Game, GAME_TABLES, GameSchemaBuilder } from '../model/game';
+import { Game } from '../model/game';
+import { GAME_TABLES } from '../schema/game';
 import { DBService } from './db.service';
 
 export class GameService implements SharableService {
@@ -13,7 +14,8 @@ export class GameService implements SharableService {
   async init(): Promise<boolean> {
     this.logger.info('Initializing Game Service Start');
 
-    await this.db.createTable(GAME_TABLES.GAME, GameSchemaBuilder, false);
+    await this.db.createTable(GAME_TABLES.GAME, false);
+    await this.db.createTable(GAME_TABLES.RELATION, false);
 
     this.logger.info('Initializing Game Service End');
 
@@ -34,6 +36,6 @@ export class GameService implements SharableService {
   }
 
   async createGame(): Promise<Game> {
-    return new Game(0, [], [], 0, new Date(), new Date());
+    return new Game(0, [], [], 0, '', new Date(), new Date());
   }
 }

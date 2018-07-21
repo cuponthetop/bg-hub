@@ -1,6 +1,6 @@
 import * as ws from 'ws';
 import { PortHoldingServer } from './server';
-import { ServiceList } from '../types/service-list';
+import { ServiceList } from './service-list';
 import { LoggerInstance } from 'winston';
 import * as _ from 'lodash';
 import { Server as BaseServer } from 'net';
