@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --output-path static",
+    "build": "ng build --output-path ../static",
     "lint": "ng lint"
   },
   "private": true,
