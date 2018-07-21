@@ -6,8 +6,11 @@ COPY backend backend
 COPY web web
 
 RUN cd web \
- && npm install \
- && npm run build \
- && cd ../backend \
- && npm install \
- && npm start
+  && npm install \
+  && npm run build \
+  && cd ../backend \
+  && npm install
+
+WORKDIR ~/backend
+
+ENTRYPOINT [ "npm" "start" ]
