@@ -34,7 +34,7 @@ services:
     networks:
       - cupnet
     volumes:
-      - static:root/static
+      - static:/root/static
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
