@@ -1,10 +1,9 @@
 name: bg-hub
 
 db:
-  host: mongo
-  port: 27017
+  host: postgres
+  port: 5432
   username:
-  password:
   authDB: admin
   db: bg
 
@@ -15,13 +14,13 @@ ws:
   port: 3001
 
 log:
-  http:
-    ssl: true
-    method: POST
-    host: sample.http.log.storage
-    port: 443
-    path: log
-    level: info
+  # http:
+  #   ssl: true
+  #   method: POST
+  #   host: sample.http.log.storage
+  #   port: 443
+  #   path: log
+  #   level: info
 
   file:
     dir: log

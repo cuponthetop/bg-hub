@@ -1,0 +1,3 @@
+
+db:
+  password: POSTGRES_PASSWORD
