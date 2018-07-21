@@ -1,7 +1,8 @@
-import { has, get, isNull } from 'lodash';
+import { get, isNull, isUndefined } from 'lodash';
 import * as winston from 'winston';
 import { format, Format } from 'logform';
 import { LogConfig } from '../types/config';
+import 'winston-daily-rotate-file';
 
 
 export let logger: winston.LoggerInstance = null;
@@ -20,7 +21,7 @@ export function createLoggerInstance(logOpts: LogConfig): winston.LoggerInstance
 
   let formatter: Format = format.combine(format.label({ label: globalLabel }), format.timestamp(), endFormatter);
 
-  if (has(logOpts, 'http') === true) {
+  if (isUndefined(logOpts.http) === false) {
     let transport: winston.TransportInstance = new winston.transports.Http({
       level: logOpts.http.level,
       ssl: logOpts.http.ssl,
@@ -31,7 +32,7 @@ export function createLoggerInstance(logOpts: LogConfig): winston.LoggerInstance
     transports.push(transport);
   }
 
-  if (has(logOpts, 'file') === true) {
+  if (isUndefined(logOpts.file) === false) {
     let transport: winston.TransportInstance = new winston.transports.DailyRotateFile({
       level: logOpts.file.level,
       filename: logOpts.file.filename,
@@ -41,7 +42,7 @@ export function createLoggerInstance(logOpts: LogConfig): winston.LoggerInstance
     transports.push(transport);
   }
 
-  if (has(logOpts, 'console') === true && true === logOpts.console.logConsole) {
+  if (isUndefined(logOpts.console) === false && true === logOpts.console.logConsole) {
     let transport: winston.TransportInstance = new winston.transports.Console({
       level: logOpts.console.level,
     });

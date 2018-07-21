@@ -22,9 +22,9 @@ function readLogConfig(): LogConfig {
   const requiredConsole: string[] = ['logConsole', 'level'];
 
   let config: LogConfig = {
-    http: has('log.http') ? readRequired(requiredHTTP) : undefined,
-    file: has('log.file') ? readRequired(requiredFile) : undefined,
-    console: has('log.console') ? readRequired(requiredConsole) : undefined,
+    http: has('log.http') ? readRequired(_.map(requiredHTTP, (name) => 'log.http.' + name), 'log.http.') : undefined,
+    file: has('log.file') ? readRequired(_.map(requiredFile, (name) => 'log.file.' + name), 'log.file.') : undefined,
+    console: has('log.console') ? readRequired(_.map(requiredConsole, (name) => 'log.console.' + name), 'log.console.') : undefined,
   };
 
   return config;
@@ -43,9 +43,9 @@ function readDBConfig(): DBConfig {
     { name: 'db.authDB', defaultValue: 'admin' },
   ]
 
-  let config = readRequired(required);
+  let config = readRequired(required, 'db.');
 
-  _.assign(config, readOptional(optional));
+  _.assign(config, readOptional(optional, 'db.'));
 
   return config;
 };
@@ -53,29 +53,31 @@ function readDBConfig(): DBConfig {
 function readHTTPConfig(): HTTPConfig {
   const required: string[] = ['http.port'];
 
-  return readRequired(required);
+  return readRequired(required, 'http.');
 };
 
 function readWSConfig(): WSConfig {
   const required: string[] = ['ws.port'];
 
-  return readRequired(required);
+  return readRequired(required, 'ws.');
 };
 
-function readRequired(required: string[]): any {
+function readRequired(required: string[], context: string): any {
+  let regex: RegExp = new RegExp(`^${context}`);
   if (false === _.every(required, (name: string) => has(name))) {
     throw new Error(`Required configuration was not found: ` + _.map(required, (name: string) => `${name}: ${has(name)} - ${has(name) ? get(name) : '"undefined"'}, `).join());
   }
 
-  return _.map(required, (name: string) => {
-    return get(name);
-  });
+  return _.reduce(required, (result: any, path: string) => {
+    return _.set(result, path.replace(regex, ''), get(path));
+  }, {});
 };
 
-function readOptional(optional: OptionalItem[]): any {
-  return _.map(optional, (item: OptionalItem) => {
-    return has(item.name) ? get(item.name) : item.defaultValue;
-  });
+function readOptional(optional: OptionalItem[], context: string): any {
+  let regex: RegExp = new RegExp(`^${context}`);
+  return _.reduce(optional, (result: any, item: OptionalItem) => {
+    return _.set(result, item.name.replace(regex, ''), has(item.name) ? get(item.name) : item.defaultValue);
+  }, {});
 };
 
 type OptionalItem = {

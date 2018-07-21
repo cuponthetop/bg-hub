@@ -4,7 +4,7 @@
   "description": "basic scaffolding for Node.js Server-side using typescript",
   "main": " ",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "cross-env NODE_ENV=develop ./node_modules/.bin/ts-node index.ts",
     "test": "test"
   },
   "author": "cuponthetop",
@@ -35,9 +35,11 @@
     "lodash": "^4.17.10",
     "logform": "^1.6.0",
     "method-override": "^2.3.10",
+    "pg": "^7.4.3",
     "ts-node": "^6.0.1",
     "typescript": "^2.8.3",
     "winston": "^2.4.2",
+    "winston-daily-rotate-file": "^3.3.0",
     "ws": "^5.1.1"
   },
   "devDependencies": {
