@@ -1,6 +1,6 @@
 FROM node:10
 
-WORKDIR ~
+WORKDIR root
 
 COPY backend backend
 COPY web web
@@ -11,6 +11,6 @@ RUN cd web \
   && cd ../backend \
   && npm install
 
-WORKDIR ~/backend
+WORKDIR root/backend
 
 ENTRYPOINT [ "npm" "start" ]
