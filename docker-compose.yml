@@ -9,3 +9,27 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     ports:
       - 443:443
+    networks:
+      - cupnet
+
+  postgres:
+    image: postgres:10-alpine
+    restart: always
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - cupnet
+
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - cupnet
+
+volumes:
+  pg-data:
+
+networks:
+  cupnet:
