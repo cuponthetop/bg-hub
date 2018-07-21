@@ -58,7 +58,9 @@ export class DBService implements SharableService {
     if (true === force) {
       await this.client.schema.dropTableIfExists(tableDefinition.name).createTable(tableDefinition.name, tableDefinition.builder);
     } else {
-      await this.client.schema.createTableIfNotExists(tableDefinition.name, tableDefinition.builder);
+      if (false === await this.client.schema.hasTable(tableDefinition.name)) {
+        await this.client.schema.createTable(tableDefinition.name, tableDefinition.builder);
+      }
     }
   };
 };
