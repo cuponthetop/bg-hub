@@ -34,9 +34,7 @@ server {
     # Read up on ssl_ciphers to ensure a secure configuration.
     # See: https://bugs.debian.org/765782
 
-
     server_name cuponthetop;
-
 
     location /web {
         root /var/local/bg-hub/static;
@@ -44,11 +42,5 @@ server {
 
     location /.well-known/acme-challenge {
         root /var/www/html/;
-    }
-
-    location /adminer {
-        rewrite /adminer/(.*) /$1  break;
-        proxy_pass http://adminer:8080/;
-        proxy_set_header X-Real-IP $remote_addr;
     }
 }
