@@ -39,7 +39,7 @@ server {
 
 
     location /static {
-        root /var/local/bg-hub/static;
+        root /var/local/bg-hub;
     }
 
     location /.well-known/acme-challenge {
