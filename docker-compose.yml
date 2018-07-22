@@ -30,13 +30,19 @@ services:
 
   bg-hub:
     build:
-      context: ./
+      context: ./backend
+    networks:
+      - cupnet
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  bg-web:
+    build:
+      context: ./web
     networks:
       - cupnet
     volumes:
       - static:/root/static
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
 
 volumes:
