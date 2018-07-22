@@ -1,11 +1,9 @@
 FROM node:10
 
-WORKDIR /root
+COPY ./ web
 
-COPY ./ root/web
-
-WORKDIR /root/web
+WORKDIR web
 
 RUN npm install
 
-ENTRYPOINT [ "npm" "run" "build" ]
+ENTRYPOINT [ "npm", "run", "build" ]
