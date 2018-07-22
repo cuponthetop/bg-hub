@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --output-path ../static",
+    "build": "ng build --output-path ../static/web --base-href /web/",
     "lint": "ng lint"
   },
   "private": true,

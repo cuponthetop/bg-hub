@@ -38,8 +38,8 @@ server {
     server_name cuponthetop;
 
 
-    location /static {
-        root /var/local/bg-hub;
+    location /web {
+        root /var/local/bg-hub/static;
     }
 
     location /.well-known/acme-challenge {
