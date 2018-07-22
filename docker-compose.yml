@@ -5,7 +5,7 @@ services:
     image: nginx
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d/default.conf
-      - static:/var/local/bg-hub/static
+      - static:/var/local/bg-hub/static:ro
       - /etc/letsencrypt:/etc/letsencrypt
     ports:
       - 443:443

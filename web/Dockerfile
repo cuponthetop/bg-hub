@@ -1,7 +1,5 @@
 FROM node:10
 
-VOLUME [ "/static" ]
-
 COPY ./ web
 
 WORKDIR web
