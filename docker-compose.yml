@@ -26,6 +26,8 @@ services:
   adminer:
     image: adminer
     restart: always
+    volumes:
+      - ./adminer/adminer.php:/var/www/html/adminer.php
     networks:
       - cupnet
 
