@@ -23,15 +23,16 @@ const gapiClientConfig: NgGapiClientConfig = {
       provide: NG_GAPI_CONFIG,
       useValue: gapiClientConfig
     }),
-    CommonModule
+    CommonModule,
   ],
   declarations: [
-    AuthService,
-    AuthGuard
+  ],
+  providers: [
+    AuthService
   ],
   exports: [
-    AuthService,
-    AuthGuard
-  ]
+
+  ],
+
 })
 export class AuthModule { }
