@@ -1,50 +1,49 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import 'rxjs/add/operator/map';
 import {
   GoogleAuthService
 } from 'ng-gapi';
-
-const SESSION_STORAGE_KEY: string = 'accessToken';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { BACKEND } from '../conf';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private user: gapi.auth2.GoogleUser = null;
+  private googleUser: gapi.auth2.GoogleUser = null;
 
-  constructor(private googleAuth: GoogleAuthService) {
+  constructor(private googleAuth: GoogleAuthService, private user: UserService) {
   }
 
-  public getToken(): string {
-    let token: string = sessionStorage.getItem(SESSION_STORAGE_KEY);
-    if (!token) {
-      throw new Error("no token set , authentication required");
-    }
-    return sessionStorage.getItem(SESSION_STORAGE_KEY);
-  }
-
-  public signIn(): void {
-    this.googleAuth.getAuth()
-      .subscribe((auth) => {
-        auth.signIn().then(res => this.signInSuccessHandler(res));
+  public signIn(): Observable<boolean> {
+    return this.googleAuth.getAuth()
+      .flatMap((auth): Promise<gapi.auth2.GoogleUser> => {
+        return auth.signIn();
+      })
+      .flatMap((user: gapi.auth2.GoogleUser): Observable<boolean> => {
+        this.googleUser = user;
+        return this.user.register(user.getAuthResponse().id_token);
       });
-  }
-
-  private signInSuccessHandler(res: gapi.auth2.GoogleUser) {
-    this.user = res;
-    sessionStorage.setItem(SESSION_STORAGE_KEY, res.getAuthResponse().access_token);
   }
 
   public isSignedIn(): boolean {
-    return null === this.user;
+    return null !== this.googleUser;
   }
 
-  public signOut(): void {
-    if (null !== this.user) {
-      this.googleAuth.getAuth().subscribe((auth) => {
-        auth.signOut().then((res) => {
-          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  public signOut(): Observable<boolean> {
+    if (null !== this.googleUser) {
+      return this.googleAuth.getAuth()
+        .flatMap((auth): Promise<gapi.auth2.GoogleUser> => {
+          return auth.signOut();
+        })
+        .map((res): boolean => {
+          return true;
         });
-      });
+    } else {
+      return Observable.of(true);
     }
   }
+
 }

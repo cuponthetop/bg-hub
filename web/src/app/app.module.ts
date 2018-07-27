@@ -3,9 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
+import { GameListComponent } from './game/game-list/game-list.component';
+
 import { AuthModule } from './auth/auth.module';
 import { RouteModule } from './route/route.module';
-import { GameListComponent } from './game-list/game-list.component';
+import { HttpClientModule } from '@angular/common/http';
+import { UserModule } from './user/user.module';
 
 @NgModule({
   declarations: [
@@ -15,8 +18,10 @@ import { GameListComponent } from './game-list/game-list.component';
   ],
   imports: [
     AuthModule,
+    UserModule,
     RouteModule,
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

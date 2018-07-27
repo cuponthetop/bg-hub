@@ -1,0 +1,1 @@
+export const BACKEND = "https://www.cuponthetop.com/api/";
