@@ -1,4 +1,4 @@
-import { LocaleID, } from './common';
+import { LocaleID, LocaleItem, } from './common';
 
 export type Position = "game designer" | "graphic designer";
 export type GameID = number;
@@ -21,7 +21,7 @@ export class Game extends SimpleGame {
     public relation: GameRelation[],
     playerRange: number[],
     title: LocaleID,
-    public titleMsg: string,
+    public titleMsg: LocaleItem,
     created_at: Date,
     updated_at: Date,
   ) {

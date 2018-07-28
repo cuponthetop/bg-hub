@@ -4,6 +4,7 @@ import { LoggerInstance } from 'winston';
 // import { LRUCache } from '../../util/lru';
 import { LocaleRow, COMMON_TABLES } from '../schema/common';
 import { DBService } from './db.service';
+import { LocaleItem } from '../model/common';
 
 export class LocaleService implements SharableService {
 
@@ -33,13 +34,19 @@ export class LocaleService implements SharableService {
     return true;
   }
 
-  async createLocale(): Promise<LocaleRow> {
-    return new LocaleRow(0, '', '');
+  async createLocale(ko: string, en: string): Promise<number> {
+    let row: LocaleRow = new LocaleRow(null, ko, en);
+
+    row = await this.db.table(COMMON_TABLES.LOCALE.name).insert(row);
+    return row.localeID;
   }
 
-  async setLocale(id: number, language: string & keyof LocaleRow): Promise<boolean> {
-    id;
-    language
-    return true;
+  private convertLocaleRowToLocaleItem(locale: LocaleRow): LocaleItem {
+    return new LocaleItem(locale.ko, locale.en);
+  }
+
+  async getLocale(id: number): Promise<LocaleItem> {
+    let row: LocaleRow = await this.db.qb.select('*').from(COMMON_TABLES.LOCALE.name).where({ localeID: id });
+    return this.convertLocaleRowToLocaleItem(row);
   }
 }

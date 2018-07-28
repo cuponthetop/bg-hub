@@ -9,9 +9,9 @@ import { UserService } from '../lib/service/user.service';
 
 export async function createServices(config: RunConfig, logger: LoggerInstance): Promise<ServiceList> {
   let db: DBService = new DBService(config.db.username, config.db.password, config.db.db, config.db.host);
-  let game: GameService = new GameService(logger, db);
   let locale: LocaleService = new LocaleService(logger, db);
-  let user: UserService = new UserService(logger, db);
+  let game: GameService = new GameService(logger, db, locale);
+  let user: UserService = new UserService(logger, db, game);
 
   let ret: ServiceList = {
     db,

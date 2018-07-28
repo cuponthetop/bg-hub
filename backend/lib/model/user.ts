@@ -1,4 +1,4 @@
-import { Game } from './game';
+import { SimpleGame } from './game';
 
 export class SimpleUser {
   constructor(
@@ -29,34 +29,44 @@ export class User extends SimpleUser {
   };
 }
 
-export interface GameListItem {
-  game: Game,
-  user: number
-  type: "own"
+export class GameListItem {
+  constructor(
+    public game: SimpleGame,
+    public type: "own",
+  ) { }
 };
 
-export interface History {
-  id: number,
-  game: Game,
-  user: number,
-  result: number[],
-  from: Date, to: Date
-  location: Location,
+export class History {
+  constructor(
+    public id: number,
+    public game: SimpleGame,
+    public result: Result[],
+    public from: Date,
+    public to: Date,
+    public location: Location,
+  ) { }
 };
 
-export interface Result {
-  id: number,
-  history: number,
-  player: number,
-  score: number,
+export class Result {
+  constructor(
+    public id: number,
+    public player: SimpleUser,
+    public score: number
+  ) { }
 };
 
-export interface Group {
-  id: number
-  name: string,
-  member: number[]
+export class Group {
+  constructor(
+    public id: number,
+    public name: string,
+    public member: SimpleUser[],
+  ) { }
 };
 
-export interface Location {
-  x: number, y: number, z: number
+export class Location {
+  constructor(
+    public x: number,
+    public y: number,
+    public z: number
+  ) { }
 };

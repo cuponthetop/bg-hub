@@ -54,6 +54,10 @@ export class DBService implements SharableService {
     return this.client.schema;
   };
 
+  get qb(): knex.QueryBuilder {
+    return this.client.queryBuilder();
+  }
+
   async createTable<T>(tableDefinition: TableDefinition<T>, force: boolean): Promise<void> {
     if (true === force) {
       await this.client.schema.dropTableIfExists(tableDefinition.name).createTable(tableDefinition.name, tableDefinition.builder);

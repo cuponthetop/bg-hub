@@ -36,9 +36,13 @@ export interface ResultRow {
 };
 
 export interface GroupRow {
-  id: number
-  name: string,
-  member: number[]
+  id: number,
+  name: string
+};
+
+export interface GroupMemberRow {
+  id: number,
+  member: number
 };
 
 export interface LocationRow {
@@ -72,8 +76,14 @@ const RESULT: TableDefinition<ResultRow> = {
 
 const GROUP: TableDefinition<GroupRow> = {
   name: "GROUP",
-  schema: { id: "id", name: "name", member: "member" },
+  schema: { id: "id", name: "name" },
   builder: GroupSchemaBuilder
+};
+
+const GROUP_MEMBER: TableDefinition<GroupMemberRow> = {
+  name: "GROUP_MEMBER",
+  schema: { id: "id", member: "member" },
+  builder: GroupMemberSchemaBuilder
 };
 
 export const USER_TABLES: {
@@ -82,7 +92,8 @@ export const USER_TABLES: {
   HISTORY: TableDefinition<HistoryRow>,
   RESULT: TableDefinition<ResultRow>,
   GROUP: TableDefinition<GroupRow>,
-} = { USER, GAME_LIST, HISTORY, RESULT, GROUP, };
+  GROUP_MEMBER: TableDefinition<GroupMemberRow>,
+} = { USER, GAME_LIST, HISTORY, RESULT, GROUP, GROUP_MEMBER };
 
 function UserSchemaBuilder(table: knex.CreateTableBuilder) {
   table.integer(USER.schema.id).notNullable().primary();
@@ -130,7 +141,12 @@ function ResultSchemaBuilder(table: knex.CreateTableBuilder) {
 function GroupSchemaBuilder(table: knex.CreateTableBuilder) {
   table.integer(GROUP.schema.id).notNullable().primary();
   table.increments(GROUP.schema.id);
-
   table.string(GROUP.schema.name);
-  table.specificType(GROUP.schema.member, 'array').references(USER.schema.id).inTable(USER.name);
+};
+
+function GroupMemberSchemaBuilder(table: knex.CreateTableBuilder) {
+  table.integer(GROUP_MEMBER.schema.id).references(GROUP.schema.id).inTable(GROUP.name);
+  table.integer(GROUP_MEMBER.schema.member).references(USER.schema.id).inTable(USER.name);
+
+  table.primary([GROUP_MEMBER.schema.id, GROUP_MEMBER.schema.member]);
 };
