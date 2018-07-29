@@ -5,6 +5,7 @@ export interface RunConfig {
   ws: WSConfig;
   db: DBConfig;
   log: LogConfig;
+  gapiClientID: string;
 };
 
 export interface ServerConfig {

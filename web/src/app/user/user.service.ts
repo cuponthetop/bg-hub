@@ -12,7 +12,7 @@ export class UserService {
 
     return this.http.post<HttpResponse<string>>(
       BACKEND + "user/signin",
-      { id_token },
+      { token: id_token },
       { headers: { 'Content-Type': 'application/json' } }
     )
       .map((res: HttpResponse<string>): boolean => {

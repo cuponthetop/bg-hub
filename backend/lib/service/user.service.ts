@@ -55,6 +55,11 @@ export class UserService implements SharableService {
     return new SimpleUser(user.id, user.authID, user.username, user.email, user.created_at, user.updated_at);
   }
 
+  async loadSimpleUserByAuth(authID: string): Promise<SimpleUser> {
+    let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ authID });
+    return this.converUserRowToSimpleUser(user);
+  }
+
   async loadSimpleUser(userID: number): Promise<SimpleUser> {
     let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ id: userID });
     return this.converUserRowToSimpleUser(user);

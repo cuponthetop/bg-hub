@@ -49,4 +49,9 @@ export class LocaleService implements SharableService {
     let row: LocaleRow = await this.db.qb.select('*').from(COMMON_TABLES.LOCALE.name).where({ localeID: id });
     return this.convertLocaleRowToLocaleItem(row);
   }
+
+  async updateLocale(id: number, target: string & keyof LocaleItem, value: string): Promise<LocaleItem> {
+    let row: LocaleRow = await this.db.table(COMMON_TABLES.LOCALE.name).where({ localeID: id }).update(target, value);
+    return this.convertLocaleRowToLocaleItem(row);
+  }
 }

@@ -11,6 +11,7 @@ export function readConfig(): RunConfig {
     http: readHTTPConfig(),
     ws: readWSConfig(),
     log: readLogConfig(),
+    gapiClientID: get('google.clientID')
   };
 
   return runArgs;
