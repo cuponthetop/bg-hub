@@ -13,40 +13,54 @@ export class UserRow {
   ) { };
 }
 
-export interface GameListRow {
-  game: number,
-  user: number
-  type: "own"
+export class GameListRow {
+  constructor(
+    public game: number,
+    public user: number,
+    public type: "own"
+  ) { }
 };
 
-export interface HistoryRow {
-  id: number,
-  game: number,
-  user: number,
-  from: Date,
-  to: Date,
-  location: LocationRow,
+export class HistoryRow {
+  constructor(
+    public id: number,
+    public game: number,
+    public user: number,
+    public from: Date,
+    public to: Date,
+    public location: LocationRow,
+  ) { }
 };
 
-export interface ResultRow {
-  id: number,
-  history: number,
-  player: number,
-  score: number,
+export class ResultRow {
+  constructor(
+    public id: number,
+    public history: number,
+    public player: number,
+    public score: number,
+  ) { }
 };
 
-export interface GroupRow {
-  id: number,
-  name: string
+export class GroupRow {
+  constructor(
+    public id: number,
+    public name: string
+  ) { }
 };
 
-export interface GroupMemberRow {
-  id: number,
-  member: number
+export class GroupMemberRow {
+  constructor(
+    public id: number,
+    public member: number
+  ) { }
 };
 
-export interface LocationRow {
-  x: number, y: number, z: number
+export class LocationRow {
+  constructor(
+    public x: number,
+    public y: number,
+    public z: number
+  ) { }
 };
 
 

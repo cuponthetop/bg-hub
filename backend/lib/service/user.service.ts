@@ -2,7 +2,7 @@ import { SharableService, Controllable } from '../../types/service';
 import { LoggerInstance } from 'winston';
 import * as _ from 'lodash';
 // import { LRUCache } from '../../util/lru';
-import { USER_TABLES, UserRow, GroupRow, HistoryRow, ResultRow } from '../schema/user';
+import { USER_TABLES, UserRow, GroupRow, HistoryRow, ResultRow, GroupMemberRow } from '../schema/user';
 import { DBService } from './db.service';
 import { SimpleUser, User, GameListItem, History, Group, Result } from '../model/user';
 import { GameService } from './game.service';
@@ -48,21 +48,18 @@ export class UserService implements SharableService {
 
     input = await this.db.table(USER_TABLES.USER.name).insert(input);
 
-    return this.converUserRowToSimpleUser(input);
+    return converUserRowToSimpleUser(input);
   }
 
-  private converUserRowToSimpleUser(user: UserRow): SimpleUser {
-    return new SimpleUser(user.id, user.authID, user.username, user.email, user.created_at, user.updated_at);
-  }
 
   async loadSimpleUserByAuth(authID: string): Promise<SimpleUser> {
     let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ authID });
-    return this.converUserRowToSimpleUser(user);
+    return converUserRowToSimpleUser(user);
   }
 
   async loadSimpleUser(userID: number): Promise<SimpleUser> {
     let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ id: userID });
-    return this.converUserRowToSimpleUser(user);
+    return converUserRowToSimpleUser(user);
   }
 
   async loadUser(userID: number): Promise<User> {
@@ -156,4 +153,33 @@ export class UserService implements SharableService {
       return new Result(listItem.RESULT.id, listItem.USER, listItem.RESULT.score);
     });
   }
+
+  async createGroup(name: string): Promise<Group> {
+    let input: GroupRow = new GroupRow(null, name);
+    input = await this.db.table(USER_TABLES.GROUP.name).insert(input);
+
+    return await this.loadGroup(input.id);
+  }
+
+  async addMemberToGroup(uid: number, groupid: number): Promise<Group> {
+    let input: GroupMemberRow = new GroupMemberRow(groupid, uid);
+
+    input = await this.db.table(USER_TABLES.GROUP_MEMBER.name).insert(input);
+
+    return await this.loadGroup(groupid);
+  }
+
+  async removeMemberFromGroup(uid: number, groupid: number): Promise<Group> {
+    await this.db.table(USER_TABLES.GROUP_MEMBER.name).where({
+      [USER_TABLES.GROUP_MEMBER.schema.id]: groupid,
+      [USER_TABLES.GROUP_MEMBER.schema.member]: uid
+    }).delete();
+
+    return await this.loadGroup(groupid);
+  }
+}
+
+
+function converUserRowToSimpleUser(user: UserRow): SimpleUser {
+  return new SimpleUser(user.id, user.authID, user.username, user.email, user.created_at, user.updated_at);
 }
