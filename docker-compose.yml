@@ -34,7 +34,7 @@ services:
     build:
       context: ./web
       args:
-        configuration: develop
+        configuration: ""
     networks:
       - cupnet
     volumes:
