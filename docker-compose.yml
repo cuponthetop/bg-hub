@@ -39,6 +39,8 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     ports:
       - 443:443
+    depends_on:
+      - bg-hub
 
 
 volumes:
