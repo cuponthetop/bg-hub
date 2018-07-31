@@ -1,11 +1,13 @@
-FROM node:10
+FROM node:10 as build
 
-COPY ./ web
+COPY ./ /web
 
-WORKDIR web
+WORKDIR /web
 
-RUN npm install
+RUN npm install \
+  && npm run build
 
+FROM nginx:latest
 
-
-ENTRYPOINT [ "npm", "run", "build" ]
+COPY --from=build /static /var/local/bg-hub
+COPY --from=build /web/nginx-conf /etc/nginx/conf.d/default.conf
