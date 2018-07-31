@@ -4,8 +4,10 @@ COPY ./ /web
 
 WORKDIR /web
 
+ARG configuration=production
+
 RUN npm install \
-  && npm run build
+  && npm run build -- --configuration $configuration
 
 FROM nginx:latest
 

@@ -33,6 +33,8 @@ services:
   bg-web:
     build:
       context: ./web
+      args:
+        configuration: develop
     networks:
       - cupnet
     volumes:
