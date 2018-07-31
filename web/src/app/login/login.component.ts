@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { Params } from '@angular/Router';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Params, Router, ActivatedRoute } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
