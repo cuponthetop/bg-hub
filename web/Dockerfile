@@ -9,5 +9,5 @@ RUN npm install \
 
 FROM nginx:latest
 
-COPY --from=build /static /var/local/bg-hub
+COPY --from=build /static /var/local/bg-hub/static
 COPY --from=build /web/nginx-conf /etc/nginx/conf.d/default.conf
