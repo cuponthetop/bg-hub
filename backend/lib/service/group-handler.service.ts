@@ -1,6 +1,6 @@
 import { Service } from '../../types/service';
 import { LoggerInstance } from 'winston';
-import * as _ from 'lodash';
+// import * as _ from 'lodash';
 import { Request, Response } from 'express';
 import 'body-parser';
 import { UserService } from './user.service';
