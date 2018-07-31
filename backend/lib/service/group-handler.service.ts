@@ -2,13 +2,13 @@ import { Service } from '../../types/service';
 import { LoggerInstance } from 'winston';
 // import * as _ from 'lodash';
 import { Request, Response } from 'express';
-import 'body-parser';
-import { UserService } from './user.service';
+import { UserQuery } from '../query/user.query';
+import { UserCommand } from '../command/user.command';
 import { Group } from '../model/user';
 
 export class GroupHandlerService implements Service {
 
-  constructor(private logger: LoggerInstance, private userSvc: UserService) {
+  constructor(private logger: LoggerInstance, private userCmd: UserCommand, private userQr: UserQuery) {
   }
 
   async init(): Promise<boolean> {
@@ -31,8 +31,8 @@ export class GroupHandlerService implements Service {
     try {
       const name: string = req.body.name;
 
-      let result: Group = await this.userSvc.createGroup(name);
-      res.status(200).json(result);
+      await this.userCmd.createGroup(name);
+      res.status(200).json(null);
       return;
     }
     catch (e) {
@@ -43,7 +43,7 @@ export class GroupHandlerService implements Service {
   async getGroup(req: Request, res: Response): Promise<void> {
     try {
       const groupid: number = req.params.groupid;
-      let result: Group = await this.userSvc.loadGroup(groupid);
+      let result: Group = await this.userQr.loadGroup(groupid);
       res.status(200).json(result);
       return;
     }

@@ -2,29 +2,22 @@ import { SharableService, Controllable } from '../../types/service';
 import { LoggerInstance } from 'winston';
 import * as _ from 'lodash';
 // import { LRUCache } from '../../util/lru';
-import { USER_TABLES, UserRow, GroupRow, HistoryRow, ResultRow, GroupMemberRow } from '../schema/user';
-import { DBService } from './db.service';
+import { USER_TABLES, UserRow, GroupRow, HistoryRow, ResultRow } from '../schema/user';
+import { DBQuery } from './db.Query';
 import { SimpleUser, User, GameListItem, History, Group, Result } from '../model/user';
-import { GameService } from './game.service';
+import { GameQuery } from './game.Query';
 // import { SimpleGame } from '../model/game';
 import { GAME_TABLES, GameRow } from '../schema/game';
 
-export class UserService implements SharableService {
+export class UserQuery implements SharableService {
 
-  constructor(private logger: LoggerInstance, private db: DBService, private game: GameService) {
+  constructor(private logger: LoggerInstance, private db: DBQuery, private game: GameQuery) {
   }
 
   async init(): Promise<boolean> {
-    this.logger.info('Initializing User Service Start');
+    this.logger.info('Initializing User Query Start');
 
-    await this.db.createTable(USER_TABLES.USER, false);
-    await this.db.createTable(USER_TABLES.HISTORY, false);
-    await this.db.createTable(USER_TABLES.RESULT, false);
-    await this.db.createTable(USER_TABLES.GROUP, false);
-    await this.db.createTable(USER_TABLES.GAME_LIST, false);
-    await this.db.createTable(USER_TABLES.GROUP_MEMBER, false);
-
-    this.logger.info('Initializing User Service End');
+    this.logger.info('Initializing User Query End');
 
     return true;
   }
@@ -42,29 +35,19 @@ export class UserService implements SharableService {
     return true;
   }
 
-  async createUser(authID: string, username: string, email: string): Promise<SimpleUser> {
-    let created: Date = new Date();
-    let input: UserRow = new UserRow(null, authID, username, email, created, created);
-
-    input = await this.db.table(USER_TABLES.USER.name).insert(input);
-
-    return converUserRowToSimpleUser(input);
-  }
-
-
   async loadSimpleUserByAuth(authID: string): Promise<SimpleUser> {
-    let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ authID });
+    let user: UserRow = await this.db.select('*').from(USER_TABLES.USER.name).where({ authID });
     return converUserRowToSimpleUser(user);
   }
 
   async loadSimpleUser(userID: number): Promise<SimpleUser> {
-    let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ id: userID });
+    let user: UserRow = await this.db.select('*').from(USER_TABLES.USER.name).where({ id: userID });
     return converUserRowToSimpleUser(user);
   }
 
   async loadUser(userID: number): Promise<User> {
-    let user: UserRow = await this.db.qb.select('*').from(USER_TABLES.USER.name).where({ id: userID });
-    let groupIDs: number[] = await this.db.qb.select([USER_TABLES.GROUP_MEMBER.schema.id]).from(USER_TABLES.GROUP_MEMBER.name).where({ member: userID });
+    let user: UserRow = await this.db.select('*').from(USER_TABLES.USER.name).where({ id: userID });
+    let groupIDs: number[] = await this.db.select(USER_TABLES.GROUP_MEMBER.schema.id).from(USER_TABLES.GROUP_MEMBER.name).where({ member: userID });
     let groups: Group[] = await Promise.all(_.map(groupIDs, async (groupID: number): Promise<Group> => await this.loadGroup(groupID)));
     let gameList: GameListItem[] = await this.loadGameList(userID);
     let history: History[] = await this.loadHistory(userID);
@@ -87,7 +70,7 @@ export class UserService implements SharableService {
       .where({ id: groupID })
       .select(`${USER_TABLES.USER.name}.*`);
 
-    let groupRow: GroupRow = await this.db.qb.select('*').from(USER_TABLES.GROUP.name).where({ id: groupID });
+    let groupRow: GroupRow = await this.db.select('*').from(USER_TABLES.GROUP.name).where({ id: groupID });
 
     return new Group(groupID, groupRow.name, members);
   }
@@ -154,29 +137,6 @@ export class UserService implements SharableService {
     });
   }
 
-  async createGroup(name: string): Promise<Group> {
-    let input: GroupRow = new GroupRow(null, name);
-    input = await this.db.table(USER_TABLES.GROUP.name).insert(input);
-
-    return await this.loadGroup(input.id);
-  }
-
-  async addMemberToGroup(uid: number, groupid: number): Promise<Group> {
-    let input: GroupMemberRow = new GroupMemberRow(groupid, uid);
-
-    input = await this.db.table(USER_TABLES.GROUP_MEMBER.name).insert(input);
-
-    return await this.loadGroup(groupid);
-  }
-
-  async removeMemberFromGroup(uid: number, groupid: number): Promise<Group> {
-    await this.db.table(USER_TABLES.GROUP_MEMBER.name).where({
-      [USER_TABLES.GROUP_MEMBER.schema.id]: groupid,
-      [USER_TABLES.GROUP_MEMBER.schema.member]: uid
-    }).delete();
-
-    return await this.loadGroup(groupid);
-  }
 }
 
 

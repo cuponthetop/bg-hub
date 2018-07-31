@@ -2,13 +2,13 @@ import { Service } from '../../types/service';
 import { LoggerInstance } from 'winston';
 import * as _ from 'lodash';
 import { Request, Response } from 'express';
-import 'body-parser';
-import { GameService } from './game.service';
+import { GameQuery } from '../query/game.query';
+import { GameCommand } from '../command/game.command';
 import { SimpleGame, Game } from '../model/game';
 
 export class GameHandlerService implements Service {
 
-  constructor(private logger: LoggerInstance, private gameSvc: GameService) {
+  constructor(private logger: LoggerInstance, private gameCmd: GameCommand, private gameQr: GameQuery) {
   }
 
   async init(): Promise<boolean> {
@@ -33,7 +33,7 @@ export class GameHandlerService implements Service {
       const titleKo: string = req.body.title_ko;
       const titleEn: string = req.body.title_en;
 
-      let result: SimpleGame = await this.gameSvc.createGame(playerRange, titleKo, titleEn);
+      let result: SimpleGame = await this.gameCmd.createGame(playerRange, titleKo, titleEn);
 
       res.status(200).json(result);
       return;
@@ -47,7 +47,7 @@ export class GameHandlerService implements Service {
     try {
       const gid: number = req.params.gid;
 
-      let result: Game = await this.gameSvc.loadGame(gid);
+      let result: Game = await this.gameQr.loadGame(gid);
 
       res.status(200).json(result);
       return;

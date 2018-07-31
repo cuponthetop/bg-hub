@@ -1,10 +1,12 @@
 import { SharableService, Controllable } from '../../types/service';
 // import { LoggerInstance } from 'winston';
+import { PickType } from '../../types/util';
 import * as _ from 'lodash';
 import * as knex from 'knex';
-import { TableDefinition } from '../../types/schema';
+import { TableName, ColumnType } from '../../types/schema';
 
-export class DBService implements SharableService {
+
+export class DBQuery implements SharableService {
   private client: knex = null;
 
   constructor(
@@ -46,25 +48,14 @@ export class DBService implements SharableService {
     return true;
   };
 
-  table(tableName: string): knex.QueryBuilder {
-    return this.client.table(tableName);
+  select(...args: ColumnType[]): Pick<knex.QueryBuilder, 'from'> {
+    return this.client.queryBuilder().select(...args);
   };
 
-  schemaBuilder(): knex.SchemaBuilder {
-    return this.client.schema;
+  table(name: TableName): JoinableQB {
+    return this.client.table(name);
   };
 
-  get qb(): knex.QueryBuilder {
-    return this.client.queryBuilder();
-  }
-
-  async createTable<T>(tableDefinition: TableDefinition<T>, force: boolean): Promise<void> {
-    if (true === force) {
-      await this.client.schema.dropTableIfExists(tableDefinition.name).createTable(tableDefinition.name, tableDefinition.builder);
-    } else {
-      if (false === await this.client.schema.hasTable(tableDefinition.name)) {
-        await this.client.schema.createTable(tableDefinition.name, tableDefinition.builder);
-      }
-    }
-  };
 };
+
+type JoinableQB = PickType<knex.QueryBuilder, knex.Join>;

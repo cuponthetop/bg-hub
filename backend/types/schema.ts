@@ -7,3 +7,7 @@ export type TableDefinition<Columns> = {
   schema: { [K in keyof Columns]: string },
   builder: CreateTableFunc
 };
+
+
+export type TableName = string | knex.Raw | knex.QueryBuilder;
+export type ColumnType = string | knex.Raw | knex.QueryBuilder | { [key: string]: string };

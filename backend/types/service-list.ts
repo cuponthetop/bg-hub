@@ -1,7 +1,7 @@
 import { Service } from './service';
 import { PortHoldingServer } from './server';
 
-type ServiceNames = "gameHandler" | "locale" | "userHandler" | "groupHandler";
+type ServiceNames = "gameHandler" | "userHandler" | "groupHandler";
 
 export type ServiceList = {
   [key in ServiceNames]: Service
