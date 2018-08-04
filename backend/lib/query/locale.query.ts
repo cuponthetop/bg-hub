@@ -1,10 +1,11 @@
 import { SharableService, Controllable } from '../../types/service';
 import { LoggerInstance } from 'winston';
-// import * as _ from 'lodash';
+import * as _ from 'lodash';
 // import { LRUCache } from '../../util/lru';
 import { LocaleRow, COMMON_TABLES } from '../schema/common';
 import { DBQuery } from './db.query';
 import { LocaleItem } from '../model/common';
+import { Nullable } from '../../types/util';
 
 export class LocaleQuery implements SharableService {
 
@@ -36,8 +37,8 @@ export class LocaleQuery implements SharableService {
     return new LocaleItem(locale.ko, locale.en);
   }
 
-  async getLocale(id: number): Promise<LocaleItem> {
-    let row: LocaleRow = await this.db.select('*').from(COMMON_TABLES.LOCALE.name).where({ localeID: id });
-    return this.convertLocaleRowToLocaleItem(row);
+  async getLocale(id: number): Promise<Nullable<LocaleItem>> {
+    let row: LocaleRow[] = await this.db.select('*').from(COMMON_TABLES.LOCALE.name).where({ localeID: id });
+    return _.isEmpty(row) ? null : this.convertLocaleRowToLocaleItem(_.head(row));
   }
 }

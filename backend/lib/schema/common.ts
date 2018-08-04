@@ -21,9 +21,8 @@ export const COMMON_TABLES = {
 };
 
 function LocaleSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(COMMON_TABLES.LOCALE.schema.localeID).notNullable().primary();
-  table.increments(COMMON_TABLES.LOCALE.schema.localeID);
+  table.increments(COMMON_TABLES.LOCALE.schema.localeID).notNullable().primary();
 
-  table.string(COMMON_TABLES.LOCALE.schema.ko);
-  table.string(COMMON_TABLES.LOCALE.schema.en);
+  table.string(COMMON_TABLES.LOCALE.schema.ko, 512);
+  table.string(COMMON_TABLES.LOCALE.schema.en, 512);
 };

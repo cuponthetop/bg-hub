@@ -1,6 +1,6 @@
 import { SharableService, Controllable } from '../../types/service';
 import { LoggerInstance } from 'winston';
-// import * as _ from 'lodash';
+import * as _ from 'lodash';
 // import { LRUCache } from '../../util/lru';
 import { LocaleRow, COMMON_TABLES } from '../schema/common';
 import { DBCommand } from './db.command';
@@ -35,10 +35,10 @@ export class LocaleCommand implements SharableService {
   }
 
   async createLocale(ko: string, en: string): Promise<number> {
-    let row: LocaleRow = new LocaleRow(null, ko, en);
+    let row: LocaleRow = new LocaleRow(undefined, ko, en);
 
-    row = await this.db.table(COMMON_TABLES.LOCALE.name).insert(row);
-    return row.localeID;
+    let result: Pick<LocaleRow, 'localeID'>[] = await this.db.table(COMMON_TABLES.LOCALE.name).insert(row).returning(COMMON_TABLES.LOCALE.schema.localeID);
+    return _.head(result).localeID;
   }
 
   private convertLocaleRowToLocaleItem(locale: LocaleRow): LocaleItem {
@@ -46,7 +46,7 @@ export class LocaleCommand implements SharableService {
   }
 
   async updateLocale(id: number, target: string & keyof LocaleItem, value: string): Promise<LocaleItem> {
-    let row: LocaleRow = await this.db.table(COMMON_TABLES.LOCALE.name).update(target, value).where({ localeID: id });
-    return this.convertLocaleRowToLocaleItem(row);
+    let row: LocaleRow[] = await this.db.table(COMMON_TABLES.LOCALE.name).update(target, value).where({ localeID: id }).returning('*');
+    return this.convertLocaleRowToLocaleItem(_.head(row));
   }
 }

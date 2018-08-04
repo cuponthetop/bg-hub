@@ -41,20 +41,21 @@ export const GAME_TABLES: { GAME: TableDefinition<GameRow>, RELATION: TableDefin
 };
 
 function GameSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(GAME.schema.id).notNullable().primary();
-  table.increments(GAME.schema.id);
+  table.increments(GAME.schema.id).notNullable().primary();
 
-  table.foreign(GAME.schema.title).references(COMMON_TABLES.LOCALE.schema.localeID).inTable(COMMON_TABLES.LOCALE.name);
+  table.integer(GAME.schema.title);
+  table.foreign(GAME.schema.title).references(COMMON_TABLES.LOCALE.schema.localeID).inTable(COMMON_TABLES.LOCALE.name).onDelete('SET NULL');
   table.timestamp(GAME.schema.created_at);
   table.timestamp(GAME.schema.updated_at);
-  table.specificType(GAME.schema.playerRange, 'array');
+  table.specificType(GAME.schema.playerRange, 'integer[]');
 };
 
 function GameRelationSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(RELATION.schema.grid).notNullable().primary();
-  table.increments(RELATION.schema.grid);
+  table.increments(RELATION.schema.grid).notNullable().primary();
 
   table.string(RELATION.schema.type);
-  table.foreign(RELATION.schema.targetID).references(GAME.schema.id).inTable(GAME.name);
-  table.foreign(RELATION.schema.sourceID).references(GAME.schema.id).inTable(GAME.name);
+  table.integer(RELATION.schema.targetID);
+  table.integer(RELATION.schema.sourceID);
+  table.foreign(RELATION.schema.targetID).references(GAME.schema.id).inTable(GAME.name).onDelete('SET NULL');
+  table.foreign(RELATION.schema.sourceID).references(GAME.schema.id).inTable(GAME.name).onDelete('SET NULL');
 };

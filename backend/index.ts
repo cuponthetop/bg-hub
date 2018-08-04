@@ -7,15 +7,20 @@ import { ServiceList, ServerList } from "./types/service-list";
 import { createServers } from "./util/create-server";
 
 export async function main(args: RunConfig): Promise<void> {
+  try {
+    const logger: LoggerInstance = createLoggerInstance(args.log);
 
-  const logger: LoggerInstance = createLoggerInstance(args.log);
+    handleGlobalProcessEvents(logger);
 
-  handleGlobalProcessEvents(logger);
+    let services: ServiceList = await createServices(args, logger);
+    let servers: ServerList = await createServers(args, logger, services);
 
-  let services: ServiceList = await createServices(args, logger);
-  let servers: ServerList = await createServers(args, logger, services);
-
-  servers;
+    servers;
+  } catch (e) {
+    console.error(e.message);
+    console.error(e.stack);
+    process.exit(1);
+  }
 }
 
 let once: boolean = true;

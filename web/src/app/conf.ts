@@ -1,1 +1,1 @@
-export const BACKEND = "https://www.cuponthetop.com/api/";
+export const BACKEND = "http://localhost:8080/api/";

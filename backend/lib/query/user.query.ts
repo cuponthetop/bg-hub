@@ -8,6 +8,7 @@ import { SimpleUser, User, GameListItem, History, Group, Result } from '../model
 import { GameQuery } from './game.Query';
 // import { SimpleGame } from '../model/game';
 import { GAME_TABLES, GameRow } from '../schema/game';
+import { Nullable } from '../../types/util';
 
 export class UserQuery implements SharableService {
 
@@ -35,44 +36,55 @@ export class UserQuery implements SharableService {
     return true;
   }
 
-  async loadSimpleUserByAuth(authID: string): Promise<SimpleUser> {
-    let user: UserRow = await this.db.select('*').from(USER_TABLES.USER.name).where({ authID });
-    return converUserRowToSimpleUser(user);
+  async loadSimpleUserByAuth(authID: string): Promise<Nullable<SimpleUser>> {
+    let user: UserRow[] = await this.db.select('*').from(USER_TABLES.USER.name).where({ authID });
+    return _.isEmpty(user) ? null : converUserRowToSimpleUser(_.head(user));
   }
 
-  async loadSimpleUser(userID: number): Promise<SimpleUser> {
+  async loadSimpleUser(userID: number): Promise<Nullable<SimpleUser>> {
+    let user: UserRow[] = await this.db.select('*').from(USER_TABLES.USER.name).where({ id: userID });
+    return _.isEmpty(user) ? null : converUserRowToSimpleUser(_.head(user));
+  }
+
+  async loadUser(userID: number): Promise<Nullable<User>> {
+    let ret: Nullable<User> = null;
     let user: UserRow = await this.db.select('*').from(USER_TABLES.USER.name).where({ id: userID });
-    return converUserRowToSimpleUser(user);
+    if (false === _.isEmpty(user)) {
+
+      let groupIDs: number[] = await this.db.select(USER_TABLES.GROUP_MEMBER.schema.id).from(USER_TABLES.GROUP_MEMBER.name).where({ member: userID });
+      let groups: Group[] = await Promise.all(_.map(groupIDs, async (groupID: number): Promise<Group> => await this.loadGroup(groupID)));
+      let gameList: GameListItem[] = await this.loadGameList(userID);
+      let history: History[] = await this.loadHistory(userID);
+
+      ret = new User(
+        user.id, user.authID, user.username, user.email,
+        gameList, history, groups,
+        user.created_at, user.updated_at
+      );
+    }
+
+    return ret;
   }
 
-  async loadUser(userID: number): Promise<User> {
-    let user: UserRow = await this.db.select('*').from(USER_TABLES.USER.name).where({ id: userID });
-    let groupIDs: number[] = await this.db.select(USER_TABLES.GROUP_MEMBER.schema.id).from(USER_TABLES.GROUP_MEMBER.name).where({ member: userID });
-    let groups: Group[] = await Promise.all(_.map(groupIDs, async (groupID: number): Promise<Group> => await this.loadGroup(groupID)));
-    let gameList: GameListItem[] = await this.loadGameList(userID);
-    let history: History[] = await this.loadHistory(userID);
-
-    return new User(
-      user.id, user.authID, user.username, user.email,
-      gameList, history, groups,
-      user.created_at, user.updated_at
-    );
-  }
-
-  async loadGroup(groupID: number): Promise<Group> {
-    let members: SimpleUser[] = await this.db
-      .table(USER_TABLES.USER.name)
-      .innerJoin(
-        USER_TABLES.GROUP_MEMBER.name,
-        `${USER_TABLES.USER.name}.${USER_TABLES.USER.schema.id}`,
-        `${USER_TABLES.GROUP_MEMBER.name}.${USER_TABLES.GROUP_MEMBER.schema.member}`
-      )
-      .where({ id: groupID })
-      .select(`${USER_TABLES.USER.name}.*`);
-
+  async loadGroup(groupID: number): Promise<Nullable<Group>> {
+    let ret: Nullable<Group> = null;
     let groupRow: GroupRow = await this.db.select('*').from(USER_TABLES.GROUP.name).where({ id: groupID });
 
-    return new Group(groupID, groupRow.name, members);
+    if (false === _.isEmpty(groupRow)) {
+
+      let members: SimpleUser[] = await this.db
+        .table(USER_TABLES.USER.name)
+        .innerJoin(
+          USER_TABLES.GROUP_MEMBER.name,
+          `${USER_TABLES.USER.name}.${USER_TABLES.USER.schema.id}`,
+          `${USER_TABLES.GROUP_MEMBER.name}.${USER_TABLES.GROUP_MEMBER.schema.member}`
+        )
+        .where({ id: groupID })
+        .select(`${USER_TABLES.USER.name}.*`);
+
+      ret = new Group(groupID, groupRow.name, members);
+    }
+    return ret;
   }
 
   async loadGameList(userID: number): Promise<GameListItem[]> {

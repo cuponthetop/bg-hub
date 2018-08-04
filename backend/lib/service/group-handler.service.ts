@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { UserQuery } from '../query/user.query';
 import { UserCommand } from '../command/user.command';
 import { Group } from '../model/user';
+import { Nullable } from '../../types/util';
 
 export class GroupHandlerService implements Service {
 
@@ -43,7 +44,7 @@ export class GroupHandlerService implements Service {
   async getGroup(req: Request, res: Response): Promise<void> {
     try {
       const groupid: number = req.params.groupid;
-      let result: Group = await this.userQr.loadGroup(groupid);
+      let result: Nullable<Group> = await this.userQr.loadGroup(groupid);
       res.status(200).json(result);
       return;
     }

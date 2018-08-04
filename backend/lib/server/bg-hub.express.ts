@@ -14,11 +14,9 @@ export class BGHubExpress extends ExpressServer {
   populateRouter(): Router {
     let router: Router = Router();
 
-    router.use('/api');
-
-    router.use('/user', userRouter(<UserHandlerService>this.services.userHandler));
-    router.use('/game', gameRouter(<GameHandlerService>this.services.gameHandler));
-    router.use('/group', groupRouter(<GroupHandlerService>this.services.groupHandler));
+    router.use('/api/user', userRouter(<UserHandlerService>this.services.userHandler));
+    router.use('/api/game', gameRouter(<GameHandlerService>this.services.gameHandler));
+    router.use('/api/group', groupRouter(<GroupHandlerService>this.services.groupHandler));
 
 
     return router;

@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import { Request, Response } from 'express';
 import { GameQuery } from '../query/game.query';
 import { GameCommand } from '../command/game.command';
-import { SimpleGame, Game } from '../model/game';
+import { Game } from '../model/game';
+import { Nullable } from '../../types/util';
 
 export class GameHandlerService implements Service {
 
@@ -33,9 +34,9 @@ export class GameHandlerService implements Service {
       const titleKo: string = req.body.title_ko;
       const titleEn: string = req.body.title_en;
 
-      let result: SimpleGame = await this.gameCmd.createGame(playerRange, titleKo, titleEn);
+      let id: number = await this.gameCmd.createGame(playerRange, titleKo, titleEn);
 
-      res.status(200).json(result);
+      res.status(200).json({ id });
       return;
     } catch (e) {
       res.status(500).json(JSON.stringify(e));
@@ -46,8 +47,7 @@ export class GameHandlerService implements Service {
   async getGame(req: Request, res: Response): Promise<void> {
     try {
       const gid: number = req.params.gid;
-
-      let result: Game = await this.gameQr.loadGame(gid);
+      let result: Nullable<Game> = await this.gameQr.loadGame(gid);
 
       res.status(200).json(result);
       return;

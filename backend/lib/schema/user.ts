@@ -77,7 +77,7 @@ const GAME_LIST: TableDefinition<GameListRow> = {
 };
 
 const HISTORY: TableDefinition<HistoryRow> = {
-  name: "History",
+  name: "HISTORY",
   schema: { id: "id", game: "game", user: "user", from: "from", to: "to", location: "location" },
   builder: HistorySchemaBuilder
 };
@@ -110,8 +110,7 @@ export const USER_TABLES: {
 } = { USER, GAME_LIST, HISTORY, RESULT, GROUP, GROUP_MEMBER };
 
 function UserSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(USER.schema.id).notNullable().primary();
-  table.increments(USER.schema.id);
+  table.increments(USER.schema.id).notNullable().primary();
 
   table.string(USER.schema.authID);
 
@@ -124,18 +123,25 @@ function UserSchemaBuilder(table: knex.CreateTableBuilder) {
 };
 
 function GameListSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.foreign(GAME_LIST.schema.user).references(USER.schema.id).inTable(USER.name);
-  table.foreign(GAME_LIST.schema.game).references(GAME_TABLES.GAME.schema.id).inTable(GAME_TABLES.GAME.name);
+
+  table.integer(GAME_LIST.schema.user);
+  table.integer(GAME_LIST.schema.game);
+
+  table.foreign(GAME_LIST.schema.user).references(USER.schema.id).inTable(USER.name).onDelete('SET NULL');
+  table.foreign(GAME_LIST.schema.game).references(GAME_TABLES.GAME.schema.id).inTable(GAME_TABLES.GAME.name).onDelete('SET NULL');
+
   table.string(GAME_LIST.schema.type);
   table.primary([GAME_LIST.schema.user, GAME_LIST.schema.game]);
 };
 
 function HistorySchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(HISTORY.schema.id).notNullable().primary();
-  table.increments(HISTORY.schema.id);
+  table.increments(HISTORY.schema.id).notNullable().primary();
 
-  table.foreign(HISTORY.schema.user).references(USER.schema.id).inTable(USER.name);
-  table.foreign(HISTORY.schema.game).references(GAME_TABLES.GAME.schema.id).inTable(GAME_TABLES.GAME.name);
+  table.integer(HISTORY.schema.user);
+  table.integer(HISTORY.schema.game);
+
+  table.foreign(HISTORY.schema.user).references(USER.schema.id).inTable(USER.name).onDelete('SET NULL');
+  table.foreign(HISTORY.schema.game).references(GAME_TABLES.GAME.schema.id).inTable(GAME_TABLES.GAME.name).onDelete('SET NULL');
 
   table.timestamp(HISTORY.schema.from);
   table.timestamp(HISTORY.schema.to);
@@ -144,23 +150,26 @@ function HistorySchemaBuilder(table: knex.CreateTableBuilder) {
 }
 
 function ResultSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(RESULT.schema.id).notNullable().primary();
-  table.increments(RESULT.schema.id);
+  table.increments(RESULT.schema.id).notNullable().primary();
 
-  table.foreign(RESULT.schema.history).references(HISTORY.schema.id).inTable(HISTORY.name);
-  table.foreign(RESULT.schema.player).references(USER.schema.id).inTable(USER.name);
+  table.integer(RESULT.schema.history);
+  table.integer(RESULT.schema.player);
+
+  table.foreign(RESULT.schema.history).references(HISTORY.schema.id).inTable(HISTORY.name).onDelete('SET NULL');
+  table.foreign(RESULT.schema.player).references(USER.schema.id).inTable(USER.name).onDelete('SET NULL');
   table.decimal(RESULT.schema.score);
 };
 
 function GroupSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(GROUP.schema.id).notNullable().primary();
-  table.increments(GROUP.schema.id);
+  table.increments(GROUP.schema.id).notNullable().primary();
   table.string(GROUP.schema.name);
 };
 
 function GroupMemberSchemaBuilder(table: knex.CreateTableBuilder) {
-  table.integer(GROUP_MEMBER.schema.id).references(GROUP.schema.id).inTable(GROUP.name);
-  table.integer(GROUP_MEMBER.schema.member).references(USER.schema.id).inTable(USER.name);
+  table.integer(GROUP_MEMBER.schema.id);
+  table.integer(GROUP_MEMBER.schema.member);
+  table.foreign(GROUP_MEMBER.schema.id).references(GROUP.schema.id).inTable(GROUP.name);
+  table.foreign(GROUP_MEMBER.schema.member).references(USER.schema.id).inTable(USER.name);
 
   table.primary([GROUP_MEMBER.schema.id, GROUP_MEMBER.schema.member]);
 };

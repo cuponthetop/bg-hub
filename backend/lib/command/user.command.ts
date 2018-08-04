@@ -1,10 +1,9 @@
 import { SharableService, Controllable } from '../../types/service';
 import { LoggerInstance } from 'winston';
-// import * as _ from 'lodash';
+import * as _ from 'lodash';
 // import { LRUCache } from '../../util/lru';
 import { USER_TABLES, UserRow, GroupRow, GroupMemberRow } from '../schema/user';
 import { DBCommand } from './db.command';
-import { SimpleUser } from '../model/user';
 
 export class UserCommand implements SharableService {
 
@@ -39,42 +38,39 @@ export class UserCommand implements SharableService {
     return true;
   }
 
-  async createUser(authID: string, username: string, email: string): Promise<SimpleUser> {
+  async createUser(authID: string, username: string, email: string): Promise<number> {
     let created: Date = new Date();
-    let input: UserRow = new UserRow(null, authID, username, email, created, created);
+    let input: UserRow = new UserRow(undefined, authID, username, email, created, created);
 
-    input = await this.db.table(USER_TABLES.USER.name).insert(input);
+    let result: Pick<UserRow, 'id'>[] = await this.db.table(USER_TABLES.USER.name).insert(input).returning([USER_TABLES.USER.schema.id]);
 
-    return converUserRowToSimpleUser(input);
+    return _.head(result).id;
   }
 
 
-  async createGroup(name: string): Promise<void> {
-    let input: GroupRow = new GroupRow(null, name);
-    input = await this.db.table(USER_TABLES.GROUP.name).insert(input);
+  async createGroup(name: string): Promise<number> {
+    let input: GroupRow = new GroupRow(undefined, name);
+    let result: Pick<GroupRow, 'id'>[] = await this.db.table(USER_TABLES.GROUP.name).insert(input).returning([USER_TABLES.GROUP.schema.id]);
 
-    return;
+    return _.head(result).id;
   }
 
   async addMemberToGroup(uid: number, groupid: number): Promise<void> {
     let input: GroupMemberRow = new GroupMemberRow(groupid, uid);
 
-    input = await this.db.table(USER_TABLES.GROUP_MEMBER.name).insert(input);
+    let result = await this.db.table(USER_TABLES.GROUP_MEMBER.name).insert(input);
 
+    this.logger.info(JSON.stringify(result));
     return;
   }
 
   async removeMemberFromGroup(uid: number, groupid: number): Promise<void> {
-    await this.db.table(USER_TABLES.GROUP_MEMBER.name).delete().where({
+    let result = await this.db.table(USER_TABLES.GROUP_MEMBER.name).delete().where({
       [USER_TABLES.GROUP_MEMBER.schema.id]: groupid,
       [USER_TABLES.GROUP_MEMBER.schema.member]: uid
     });
 
+    this.logger.info(JSON.stringify(result));
     return;
   }
-}
-
-
-function converUserRowToSimpleUser(user: UserRow): SimpleUser {
-  return new SimpleUser(user.id, user.authID, user.username, user.email, user.created_at, user.updated_at);
 }
