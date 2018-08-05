@@ -21,6 +21,13 @@ export function createLoggerInstance(logOpts: LogConfig): winston.LoggerInstance
 
   let formatter: Format = format.combine(format.label({ label: globalLabel }), format.timestamp(), endFormatter);
 
+  if (isUndefined(logOpts.console) === false && true === logOpts.console.logConsole) {
+    let transport: winston.TransportInstance = new winston.transports.Console({
+      level: logOpts.console.level,
+    });
+    transports.push(transport);
+  }
+
   if (isUndefined(logOpts.http) === false) {
     let transport: winston.TransportInstance = new winston.transports.Http({
       level: logOpts.http.level,
@@ -38,13 +45,6 @@ export function createLoggerInstance(logOpts: LogConfig): winston.LoggerInstance
       filename: logOpts.file.filename,
       dirname: logOpts.file.dir,
       maxsize: (logOpts.file.maxSizeInKB * 1024)
-    });
-    transports.push(transport);
-  }
-
-  if (isUndefined(logOpts.console) === false && true === logOpts.console.logConsole) {
-    let transport: winston.TransportInstance = new winston.transports.Console({
-      level: logOpts.console.level,
     });
     transports.push(transport);
   }

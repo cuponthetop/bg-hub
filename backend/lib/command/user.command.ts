@@ -11,7 +11,7 @@ export class UserCommand implements SharableService {
   }
 
   async init(): Promise<boolean> {
-    this.logger.info('Initializing User Service Start');
+    this.logger.info('Initializing User Command Start');
 
     await this.db.createTable(USER_TABLES.USER, false);
     await this.db.createTable(USER_TABLES.HISTORY, false);
@@ -20,7 +20,7 @@ export class UserCommand implements SharableService {
     await this.db.createTable(USER_TABLES.GAME_LIST, false);
     await this.db.createTable(USER_TABLES.GROUP_MEMBER, false);
 
-    this.logger.info('Initializing User Service End');
+    this.logger.info('Initializing User Command End');
 
     return true;
   }

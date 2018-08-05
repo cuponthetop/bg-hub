@@ -57,7 +57,7 @@ export class UserQuery implements SharableService {
       let history: History[] = await this.loadHistory(userID);
 
       ret = new User(
-        user.id, user.authID, user.username, user.email,
+        user.id, null, user.username, user.email,
         gameList, history, groups,
         user.created_at, user.updated_at
       );
@@ -119,7 +119,7 @@ export class UserQuery implements SharableService {
         `${USER_TABLES.HISTORY.name}.${USER_TABLES.HISTORY.schema.from}`,
         `${USER_TABLES.HISTORY.name}.${USER_TABLES.HISTORY.schema.id}`,
         `${USER_TABLES.HISTORY.name}.${USER_TABLES.HISTORY.schema.to}`,
-        `${USER_TABLES.HISTORY.name}.${USER_TABLES.HISTORY.schema.location}`
+        // `${USER_TABLES.HISTORY.name}.${USER_TABLES.HISTORY.schema.location}`
       ]);
 
     return await Promise.all(_.map(histories, async (listItem: { GAME: GameRow, HISTORY: Partial<HistoryRow> }): Promise<History> => {

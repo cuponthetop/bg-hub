@@ -16,6 +16,8 @@ export async function main(args: RunConfig): Promise<void> {
     let servers: ServerList = await createServers(args, logger, services);
 
     servers;
+
+    logger.info(`Server Listening with args: ${JSON.stringify(args)}`);
   } catch (e) {
     console.error(e.message);
     console.error(e.stack);

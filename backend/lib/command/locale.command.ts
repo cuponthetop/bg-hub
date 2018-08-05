@@ -12,11 +12,11 @@ export class LocaleCommand implements SharableService {
   }
 
   async init(): Promise<boolean> {
-    this.logger.info('Initializing Locale Service Start');
+    this.logger.info('Initializing Locale Command Start');
 
     await this.db.createTable(COMMON_TABLES.LOCALE, false);
 
-    this.logger.info('Initializing Locale Service End');
+    this.logger.info('Initializing Locale Command End');
 
     return true;
   }

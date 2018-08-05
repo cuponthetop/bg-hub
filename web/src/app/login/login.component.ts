@@ -18,10 +18,10 @@ export class LoginComponent implements OnInit {
 
   googleSignIn() {
     combineLatest(this.auth.signIn(), this.route.queryParams, (res: boolean, param: Params) => {
-      return { res, redirectTo: param['return'] || '/' };
+      return { success: res, redirectTo: param['return'] || '/' };
     })
-      .subscribe((signInRes: { res: boolean, redirectTo: string }) => {
-        if (signInRes) {
+      .subscribe((signInRes: { success: boolean, redirectTo: string }) => {
+        if (signInRes.success) {
           this.router.navigateByUrl(signInRes.redirectTo);
         } else {
           console.error('login failed');

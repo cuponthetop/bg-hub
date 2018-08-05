@@ -12,12 +12,12 @@ export class GameCommand implements SharableService {
   }
 
   async init(): Promise<boolean> {
-    this.logger.info('Initializing Game Service Start');
+    this.logger.info('Initializing Game Command Start');
 
     await this.db.createTable(GAME_TABLES.GAME, false);
     await this.db.createTable(GAME_TABLES.RELATION, false);
 
-    this.logger.info('Initializing Game Service End');
+    this.logger.info('Initializing Game Command End');
 
     return true;
   }

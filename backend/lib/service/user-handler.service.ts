@@ -7,7 +7,7 @@ import { UserCommand } from '../command/user.command';
 import { OAuth2Client } from 'google-auth-library';
 import { LoginTicket, TokenPayload } from 'google-auth-library/build/src/auth/loginticket';
 import { SimpleUser, User } from '../model/user';
-import { Nullable } from '../../types/util';
+import { Nullable, Omit } from '../../types/util';
 
 export class UserHandlerService implements Service {
   gapiClient: OAuth2Client = null;
@@ -36,18 +36,19 @@ export class UserHandlerService implements Service {
   async createUser(req: Request, res: Response): Promise<void> {
     const authID: string = req.body.token;
 
+    const ticket: LoginTicket = await this.gapiClient.verifyIdToken({
+      idToken: authID,
+      audience: this.clientID
+    });
+
+    const payload: TokenPayload = ticket.getPayload();
+    const userid: string = payload.sub;
+
     try {
-      const user: Nullable<SimpleUser> = await this.userQr.loadSimpleUserByAuth(authID);
+      const user: Nullable<SimpleUser> = await this.userQr.loadSimpleUserByAuth(userid);
       let id: number = null;
       if (_.isNull(user)) {
 
-        const ticket: LoginTicket = await this.gapiClient.verifyIdToken({
-          idToken: authID,
-          audience: this.clientID
-        });
-
-        const payload: TokenPayload = ticket.getPayload();
-        const userid: string = payload.sub;
         const username: string = payload.name;
         const email: string = payload.email;
 
@@ -66,11 +67,41 @@ export class UserHandlerService implements Service {
 
   async getUser(req: Request, res: Response): Promise<void> {
     const uid: number = req.params.uid;
+    const omitList: string[] = ["authID"];
 
     try {
-      let result: Nullable<User> = await this.userQr.loadUser(uid);
+      let result: Nullable<Omit<User, 'authID'>> = await this.userQr.loadUser(uid);
 
-      res.status(200).json(result);
+      if (_.isNull(result)) {
+        res.status(404).json();
+      } else {
+        res.status(200).json(_.omit(result, omitList));
+      }
+      return;
+    }
+    catch (e) {
+      res.status(500).json(JSON.stringify(e));
+    }
+  }
+
+  async findUser(req: Request, res: Response): Promise<void> {
+    const authID: string = req.query.authID;
+    const ticket: LoginTicket = await this.gapiClient.verifyIdToken({
+      idToken: authID,
+      audience: this.clientID
+    });
+
+    const payload: TokenPayload = ticket.getPayload();
+    const userid: string = payload.sub;
+
+    try {
+      let result: Nullable<SimpleUser> = await this.userQr.loadSimpleUserByAuth(userid);
+
+      if (_.isNull(result)) {
+        res.status(404).json();
+      } else {
+        res.status(200).json({ id: result.id });
+      }
       return;
     }
     catch (e) {
