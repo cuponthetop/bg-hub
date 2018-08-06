@@ -36,7 +36,10 @@ export class GameQuery implements SharableService {
   }
 
   convertGameRowToSimpleGame(game: GameRow): SimpleGame {
-    return new SimpleGame(game.id, game.playerRange, game.title, game.created_at, game.updated_at);
+    return new SimpleGame(game.id, game.playerRange, game.title, game.created_at, game.updated_at,
+      { width: game.boxWidth, height: game.boxHeight, depth: game.boxDepth },
+      { width: game.settingWidth, height: game.settingHeight }
+    );
   }
 
   async loadGame(gameID: number): Promise<Nullable<Game>> {
@@ -48,7 +51,10 @@ export class GameQuery implements SharableService {
       let relations: GameRelationRow[] = await this.db.select('*').from(GAME_TABLES.RELATION.name).where({ sourceID: gameID }).orWhere({ targetID: gameID });
       let msg: LocaleItem = await this.locale.getLocale(game.title);
 
-      ret = new Game(game.id, relations, game.playerRange, game.title, msg, game.created_at, game.updated_at);
+      ret = new Game(game.id, relations, game.playerRange, game.title, msg, game.created_at, game.updated_at,
+        { width: game.boxWidth, height: game.boxHeight, depth: game.boxDepth },
+        { width: game.settingWidth, height: game.settingHeight }
+      );
     }
     return ret;
   }

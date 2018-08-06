@@ -28,7 +28,6 @@ export class HistoryRow {
     public user: number,
     public from: Date,
     public to: Date,
-    public location: LocationRow,
   ) { }
 };
 
@@ -78,7 +77,7 @@ const GAME_LIST: TableDefinition<GameListRow> = {
 
 const HISTORY: TableDefinition<HistoryRow> = {
   name: "HISTORY",
-  schema: { id: "id", game: "game", user: "user", from: "from", to: "to", location: "location" },
+  schema: { id: "id", game: "game", user: "user", from: "from", to: "to" },
   builder: HistorySchemaBuilder
 };
 

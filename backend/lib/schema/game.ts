@@ -9,6 +9,11 @@ export class GameRow {
     public id: ID,
     public playerRange: number[],
     public title: LocaleID,
+    public boxWidth: number,
+    public boxHeight: number,
+    public boxDepth: number,
+    public settingWidth: number,
+    public settingHeight: number,
     public created_at: Date,
     public updated_at: Date,
   ) { };
@@ -25,7 +30,10 @@ export class GameRelationRow {
 
 const GAME: TableDefinition<GameRow> = {
   name: "GAME",
-  schema: { id: "id", title: 'title', created_at: 'created_at', updated_at: 'updated_at', playerRange: 'playerRange' },
+  schema: {
+    id: "id", title: 'title', created_at: 'created_at', updated_at: 'updated_at', playerRange: 'playerRange',
+    boxWidth: 'boxWidth', boxHeight: 'boxHeight', boxDepth: 'boxDepth', settingWidth: 'settingWidth', settingHeight: 'settingHeight',
+  },
   builder: GameSchemaBuilder
 };
 
@@ -48,6 +56,12 @@ function GameSchemaBuilder(table: knex.CreateTableBuilder) {
   table.timestamp(GAME.schema.created_at);
   table.timestamp(GAME.schema.updated_at);
   table.specificType(GAME.schema.playerRange, 'integer[]');
+
+  table.integer(GAME.schema.boxWidth);
+  table.integer(GAME.schema.boxHeight);
+  table.integer(GAME.schema.boxDepth);
+  table.integer(GAME.schema.settingWidth);
+  table.integer(GAME.schema.settingHeight);
 };
 
 function GameRelationSchemaBuilder(table: knex.CreateTableBuilder) {

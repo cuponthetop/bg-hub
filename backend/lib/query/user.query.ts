@@ -124,7 +124,7 @@ export class UserQuery implements SharableService {
 
     return await Promise.all(_.map(histories, async (listItem: { GAME: GameRow, HISTORY: Partial<HistoryRow> }): Promise<History> => {
       let results: Result[] = await this.loadResult(listItem.HISTORY.id);
-      return new History(listItem.HISTORY.id, this.game.convertGameRowToSimpleGame(listItem.GAME), results, listItem.HISTORY.from, listItem.HISTORY.to, listItem.HISTORY.location);
+      return new History(listItem.HISTORY.id, this.game.convertGameRowToSimpleGame(listItem.GAME), results, listItem.HISTORY.from, listItem.HISTORY.to);
     }));
   }
 

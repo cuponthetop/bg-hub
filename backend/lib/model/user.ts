@@ -43,7 +43,7 @@ export class History {
     public result: Result[],
     public from: Date,
     public to: Date,
-    public location: Location,
+    // public location: Location,
   ) { }
 };
 

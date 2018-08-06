@@ -10,6 +10,8 @@ export class SimpleGame {
     public title: LocaleID,
     public created_at: Date,
     public updated_at: Date,
+    public box: { width: number, height: number, depth: number },
+    public settingSize: { width: number, height: number }
   ) {
 
   };
@@ -24,8 +26,10 @@ export class Game extends SimpleGame {
     public titleMsg: LocaleItem,
     created_at: Date,
     updated_at: Date,
+    box: { width: number, height: number, depth: number },
+    settingSize: { width: number, height: number }
   ) {
-    super(id, playerRange, title, created_at, updated_at);
+    super(id, playerRange, title, created_at, updated_at, box, settingSize);
   };
 };
 

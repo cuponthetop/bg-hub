@@ -33,8 +33,10 @@ export class GameHandlerService implements Service {
       const playerRange: number[] = _.uniq(req.body.players);
       const titleKo: string = req.body.title_ko;
       const titleEn: string = req.body.title_en;
+      const box: { width: number, height: number, depth: number } = req.body.box;
+      const setting: { width: number, height: number } = req.body.setting;
 
-      let id: number = await this.gameCmd.createGame(playerRange, titleKo, titleEn);
+      let id: number = await this.gameCmd.createGame(playerRange, titleKo, titleEn, box, setting);
 
       res.status(200).json({ id });
       return;
