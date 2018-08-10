@@ -2,7 +2,7 @@ FROM node:10
 
 WORKDIR backend
 
-COPY ./*.json .
+COPY ./*.json ./
 
 RUN npm install
 
