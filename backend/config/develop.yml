@@ -31,6 +31,3 @@ log:
   console:
     logConsole: true
     level: warn
-
-google:
-  clientID: 1050748936908-h6766qj1n6e93q6557nam35a5kghba4s.apps.googleusercontent.com

@@ -13,14 +13,6 @@ services:
     networks:
       - cupnet
 
-  # adminer:
-  #   image: adminer:4.6.3
-  #   restart: always
-  #   volumes:
-  #     - ./adminer/adminer.php:/var/www/html/adminer.php
-  #   networks:
-  #     - cupnet
-
   bg-hub:
     build:
       context: ./backend
@@ -29,6 +21,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
 
   bg-web:
     build:

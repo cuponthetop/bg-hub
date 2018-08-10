@@ -1,3 +1,6 @@
 
 db:
   password: POSTGRES_PASSWORD
+
+google:
+  clientID: GOOGLE_CLIENT_ID
