@@ -46,6 +46,6 @@ server {
     }
 
     location /api {
-        proxy_pass http://bg-hub/;
+        proxy_pass http://bg-hub/api;
     }
 }
