@@ -7,4 +7,4 @@ WORKDIR backend
 RUN npm install \
   && env
 
-CMD [ "npm", "start" ]
+CMD [ "npx","cross-env", "NODE_ENV=$NODE_ENV", "ts-node", "index.ts" ]
