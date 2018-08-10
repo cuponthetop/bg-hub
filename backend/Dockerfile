@@ -4,6 +4,7 @@ COPY ./ backend
 
 WORKDIR backend
 
-RUN npm install
+RUN npm install \
+  && env
 
-ENTRYPOINT [ "npm", "start" ]
+CMD [ "npm", "start" ]
