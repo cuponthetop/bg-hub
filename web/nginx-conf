@@ -50,6 +50,6 @@ server {
     }
 
     location /zanata {
-        proxy_pass http://zanata:8080/;
+        proxy_pass https://zanata:8080/;
     }
 }
