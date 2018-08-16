@@ -51,7 +51,7 @@ services:
     volumes:
       - zanata-db:/var/lib/mysql:Z
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: yes
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
       MYSQL_USER: ${ZANATA_MYSQL_USER}
       MYSQL_PASSWORD: ${ZANATA_MYSQL_PASSWORD}
       MYSQL_DATABASE: ${ZANATA_MYSQL_DATABASE}
@@ -78,8 +78,8 @@ services:
       MAIL_PORT: 25
       MAIL_USERNAME: ${ZANATA_MAIL_USERNAME}
       MAIL_PASSWORD: ${ZANATA_MAIL_PASSWORD}
-      MAIL_TLS: false
-      MAIL_SSL: false
+      MAIL_TLS: "false"
+      MAIL_SSL: "false"
 
 volumes:
   zanata-files:
