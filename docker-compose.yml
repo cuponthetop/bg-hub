@@ -39,9 +39,52 @@ services:
       - 443:443
     depends_on:
       - bg-hub
+      - zanata
 
+  zanatadb:
+    image: "mariadb:10.1"
+    restart: on-failure
+    container_name: "zanatadb"
+    command: "--character-set-server=utf8 --collation-server=utf8_general_ci"
+    networks:
+      - cupnet
+    volumes:
+      - zanata-db:/var/lib/mysql:Z
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=${ZANATA_MYSQL_USER}
+      - MYSQL_PASSWORD=${ZANATA_MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${ZANATA_MYSQL_DATABASE}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+
+  zanata:
+    image: "zanata/server:latest"
+    container_name: "zanata"
+    volumes:
+      - zanata-files:/var/lib/zanata
+    networks:
+      - cupnet
+    depends_on:
+      zanatadb:
+        condition: service_healthy
+    environment:
+      - ZANATA_HOME=/var/lib/zanata
+      - DB_HOSTNAME=zanatadb
+      - DB_SCHEMA=${ZANATA_MYSQL_DATABASE}
+      - DB_USERNAME=${ZANATA_MYSQL_USER}
+      - DB_PASSWORD=${ZANATA_MYSQL_PASSWORD}
+      - DB_PORTNUMBER=3306
+      - MAIL_HOST=localhost
+      - MAIL_PORT=25
+      - MAIL_USERNAME=${ZANATA_MAIL_USERNAME}
+      - MAIL_PASSWORD=${ZANATA_MAIL_PASSWORD}
+      - MAIL_TLS=false
+      - MAIL_SSL=false
 
 volumes:
+  zanata-files:
+  zanata-db:
   pg-data:
 
 networks:

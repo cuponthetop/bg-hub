@@ -48,4 +48,8 @@ server {
     location /api {
         proxy_pass http://bg-hub/api;
     }
+
+    location /zanata {
+        proxy_pass http://zanata:8080/;
+    }
 }
